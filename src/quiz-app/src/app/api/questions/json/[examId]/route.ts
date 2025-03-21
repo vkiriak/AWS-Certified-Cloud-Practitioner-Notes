@@ -12,9 +12,13 @@ interface JsonQuestion {
   reference: string;
 }
 
-export async function GET(request: Request, { params }: { params: { examId: string } }) {
+type Params = Promise<{ examId: string }>;
+
+export async function GET(
+  request: Request, 
+  { params }: { params: Params }) {
   try {
-    const { examId } = params;
+    const { examId } = await params;
     const jsonExamsDir = path.join(process.cwd(), process.env.JSON_EXAMS_FOLDER || 'src/data/');
     const filePath = path.join(jsonExamsDir, `${examId}.json`);
 
@@ -38,7 +42,7 @@ export async function GET(request: Request, { params }: { params: { examId: stri
 
     return NextResponse.json(questions);
   } catch (error) {
-    console.error('Error in /api/json_questions/[examId]:', error);
+    console.error('Error in /api/questions/json/[examId]:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -2,12 +2,14 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { marked } from 'marked';
+import { marked, Token } from 'marked';
 import { Question } from '../../../../../types/quiz';
 
-export async function GET(request: Request, { params }: { params: { examId: string } }) {
+type Params = Promise<{ examId: string }>;
+
+export async function GET(request: Request, { params }: { params: Params }) {
   try {
-    const { examId } = params;
+    const { examId } = await params;
     const filePath = path.join(process.cwd(), '..', '..', 'practice-exam', `${examId}.md`);
     
     if (!fs.existsSync(filePath)) {
@@ -20,7 +22,7 @@ export async function GET(request: Request, { params }: { params: { examId: stri
     const questions: Question[] = [];
     const tokens = marked.lexer(content);
 
-    tokens.forEach((token: any) => {
+    tokens.forEach((token: Token) => {
       if (token.type === 'list') {
         const questionBlocks = token.raw.split(/\n\n(?=\d+\.\s)/);
         questionBlocks.forEach((block: string) => {

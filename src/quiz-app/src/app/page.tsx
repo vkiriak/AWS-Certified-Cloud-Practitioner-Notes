@@ -22,9 +22,13 @@ export default function LandingPage() {
         }
         setExams(data);
         setIsLoading(false);
-      } catch (error: any) {
-        console.error('Failed to fetch exams:', error);
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          console.error('An unknown error occurred:', error);
+          setError('An unknown error occurred');
+        };
         setIsLoading(false);
       }
     }

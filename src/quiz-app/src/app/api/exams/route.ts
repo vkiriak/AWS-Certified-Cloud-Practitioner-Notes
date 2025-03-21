@@ -27,7 +27,7 @@ export async function GET() {
       // Sort by the numeric value
       .sort((a, b) => a.number - b.number)
       // Remove the temporary number field
-      .map(({ id, displayName }) => displayName);
+      .map(({ displayName }) => displayName);
 
     if (examFiles.length === 0) {
       return NextResponse.json({ error: `No exam files found: ${examsDir}` }, { status: 400 });

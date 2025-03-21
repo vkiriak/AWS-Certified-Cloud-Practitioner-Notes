@@ -26,9 +26,13 @@ export default function QuizPage() {
         if (data.error) throw new Error(data.error);
         setQuestions(data);
         setIsLoading(false);
-      } catch (error: any) {
-        console.error('Failed to fetch questions:', error);
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          console.error('An unknown error occurred:', error);
+          setError('An unknown error occurred');
+        };
         setIsLoading(false);
       }
     }
@@ -109,7 +113,7 @@ export default function QuizPage() {
     const score = calculateScore();
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Quiz Results - {examId ? examId.replace('practice-exam-', 'Exam ') : 'Unknown Exam'}</h1>
+        <h1 className="text-2xl font-bold mb-4">Quiz Results - {typeof examId == 'string' ? examId.replace('practice-exam-', 'Exam ') : 'Unknown Exam'}</h1>
         <p>Score: {score.toFixed(2)}%</p>
         <p>Time Remaining: {formatTime(timeLeft)}</p>
         <h2 className="text-xl mt-4 mb-2">Incorrect Answers:</h2>
